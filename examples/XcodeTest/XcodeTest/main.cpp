@@ -16,9 +16,7 @@ void dijkstra(TPt<TNodeEDatNet<TInt, TFlt> >  graph, const int &SrcNId);
 
 void floydWarshall(TPt<TNodeEDatNet<TInt, TFlt> >  graph, int &vertices);
 
-void Prim(TPt<TNodeEDatNet<TInt, TFlt>> Grafo, int source);
-
-void printVector(std::vector<int> vector);
+void prim(TPt<TNodeEDatNet<TInt, TFlt>> Grafo, int source);
 
 bool sortFunction(int a, int b,std::vector<float> distancias);
 
@@ -148,7 +146,7 @@ int main(int argc, char* argv[]) {
   
   //Prim
   std::cout << "-------Prim------" << std::endl;
-  Prim(G, 1);
+  prim(G, 1);
   
   //Kruskal
   std::cout << "-------Kruskal------" << std::endl;
@@ -291,7 +289,7 @@ void dijkstra(TPt<TNodeEDatNet<TInt, TFlt> >  graph, const int &v){
   
 }//cierre de dijkstra
 
-void Prim(TPt<TNodeEDatNet<TInt, TFlt>> Grafo, int source)
+void prim(TPt<TNodeEDatNet<TInt, TFlt>> Grafo, int source)
 {
   double inf = 1000000;
   distanciaId* u;
@@ -385,17 +383,17 @@ void setUnion(int u, int v, int padre[]) {
   padre[u-1] = v;
 }
 
-void printVector(std::vector<int> vector){
-  
-  printf("[ ");
-  
-  for (int i = 0; i < vector.size(); i++){
-    printf("%d ",vector[i]);
-  }
-  
-  printf("] \n");
-  
-}//cierre de printVector
+//void printVector(std::vector<int> vector){
+//  
+//  printf("[ ");
+//  
+//  for (int i = 0; i < vector.size(); i++){
+//    printf("%d ",vector[i]);
+//  }
+//  
+//  printf("] \n");
+//  
+//}//cierre de printVector
 
 bool sortFunction(int a, int b, std::vector<float> distancias){
   return distancias[a-1] < distancias[b-1];
