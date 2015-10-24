@@ -5,9 +5,9 @@
 #include "Snap.h"
 #include <iostream>
 #include <vector>
-#include <deque>
 #include <chrono>
 #include <limits>
+#include <queue>
 //#include "distanciaId.h"
 //ESTE ES KRUSKAL
 
@@ -22,6 +22,12 @@ void Prim(TPt<TNodeEDatNet<TInt, TFlt>> Grafo, int source);
 void printVector(std::vector<int> vector);
 
 bool sortFunction(int a, int b,std::vector<float> distancias);
+
+void kruskal(TPt<TNodeEDatNet<TInt, TFlt> > g, int vertices);
+
+int encontrarSet(int x, int padre[]);
+
+void setUnion(int u, int v, int padre[]);
 
 class distanciaId
 {
@@ -97,7 +103,7 @@ int main(int argc, char* argv[]) {
   G->AddEdge(12,14,9);
   G->AddEdge(13,14,6);
   G->AddEdge(14,13,2);
-
+  
   class myVis {
   public:
     myVis() { }
@@ -118,7 +124,7 @@ int main(int argc, char* argv[]) {
   auto end = std::chrono::high_resolution_clock::now();
   auto dfs = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
   std::cout << "Tiempo de ejecución de DFS: " << dfs.count() << " us" << std::endl;
-
+  
   //BFS
   std::cout << "---BFS---" << std::endl;
   begin = std::chrono::high_resolution_clock::now();
@@ -127,9 +133,9 @@ int main(int argc, char* argv[]) {
   auto bfs = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
   std::cout << "Tiempo de ejecución de BFS: " << bfs.count() << " us" << std::endl;
   
-//  for (TNGraph::TNodeI NI = GBFS->BegNI(); NI < GBFS->EndNI(); NI++) {
-//    printf("%d\n", NI.GetId());
-//  }
+  //  for (TNGraph::TNodeI NI = GBFS->BegNI(); NI < GBFS->EndNI(); NI++) {
+  //    printf("%d\n", NI.GetId());
+  //  }
   
   //Dijkstra
   std::cout << "---Dijkstra---" << std::endl;
@@ -144,6 +150,10 @@ int main(int argc, char* argv[]) {
   //Prim
   std::cout << "-------Prim------" << std::endl;
   Prim(G, 1);
+  
+  //Kruskal
+  std::cout << "-------Kruskal------" << std::endl;
+  kruskal(G, numNodos);
   
   return 0;
   
@@ -206,20 +216,20 @@ void floydWarshall(TPt<TNodeEDatNet<TInt, TFlt> >  G, int &vertices) {
   auto end = std::chrono::high_resolution_clock::now();
   auto floyd = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
   
-//  //impresion de la matriz
-//  for (int i = 0; i < vertices; i++) {
-//    for (int j = 0; j < vertices; j++) {
-//      
-//      if (mat[i][j] == infinito) {
-//        std::cout << "Del nodo " << i+1 << " al nodo " << j+1 << " : inf" << std::endl;
-//      }//cierre del if
-//      else {
-//        std::cout << "Del nodo " << i+1 << " al nodo " << j+1 << " : " << mat[i][j] << std::endl;
-//      }//cierre del else
-//      
-//    }//cierre del segundo for
-//    std::cout << std::endl;
-//  }//cierre del primer for
+  //  //impresion de la matriz
+  //  for (int i = 0; i < vertices; i++) {
+  //    for (int j = 0; j < vertices; j++) {
+  //
+  //      if (mat[i][j] == infinito) {
+  //        std::cout << "Del nodo " << i+1 << " al nodo " << j+1 << " : inf" << std::endl;
+  //      }//cierre del if
+  //      else {
+  //        std::cout << "Del nodo " << i+1 << " al nodo " << j+1 << " : " << mat[i][j] << std::endl;
+  //      }//cierre del else
+  //
+  //    }//cierre del segundo for
+  //    std::cout << std::endl;
+  //  }//cierre del primer for
   
   //impresion del tiempo de ejecucion
   std::cout << "Tiempo de ejecución de Floyd-Warshall: " << floyd.count() << " us" << std::endl;
@@ -271,11 +281,11 @@ void dijkstra(TPt<TNodeEDatNet<TInt, TFlt> >  graph, const int &v){
   auto end = std::chrono::high_resolution_clock::now();
   auto dijkstra = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
   
-//  int node = 1;
-//  for (int i = 0 ; i< parents.size(); i++){
-//    std::cout << parents[node-1] << " -> " << node << " distance:  " << distances[node-1] << std::endl;
-//    node++;
-//  }//cierre del for
+  //  int node = 1;
+  //  for (int i = 0 ; i< parents.size(); i++){
+  //    std::cout << parents[node-1] << " -> " << node << " distance:  " << distances[node-1] << std::endl;
+  //    node++;
+  //  }//cierre del for
   
   //impresion del tiempo de ejecucion
   std::cout << "Tiempo de ejecución de Dijkstra: " <<dijkstra.count() << " us" << std::endl;
@@ -284,7 +294,7 @@ void dijkstra(TPt<TNodeEDatNet<TInt, TFlt> >  graph, const int &v){
 
 void Prim(TPt<TNodeEDatNet<TInt, TFlt>> Grafo, int source)
 {
-  double inf = std::numeric_limits<double>::infinity();
+  double inf = 1000000;
   distanciaId* u;
   std::vector<distanciaId*> delta(Grafo->GetNodes());
   std::vector<int> Q(Grafo->GetNodes());
@@ -321,9 +331,59 @@ void Prim(TPt<TNodeEDatNet<TInt, TFlt>> Grafo, int source)
   auto prim = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
   std::cout << "Tiempo de ejecución de Prim: " << prim.count() << " us" << std::endl;
   
-//  for (auto i : S) {
-//    std::cout << i->getPadre() << "--->" << i->getId() << std::endl;
-//  }
+  //  for (auto i : S) {
+  //    std::cout << i->getPadre() << "--->" << i->getId() << std::endl;
+  //  }
+}
+
+void kruskal(TPt<TNodeEDatNet<TInt, TFlt> > G, int vertices) {
+  
+  int padre[vertices];
+  std::vector<std::pair<int, TPt<TNodeEDatNet<TInt, TFlt> >::TObj::TEdgeI> > aristas;
+  std::vector<TPt<TNodeEDatNet<TInt, TFlt> >::TObj::TEdgeI> tree;
+  
+  auto begin = std::chrono::high_resolution_clock::now();
+  for (TPt<TNodeEDatNet<TInt, TFlt> >::TObj::TNodeI NI = G->BegNI(); NI < G->EndNI(); NI++) {
+    int id = NI.GetId();
+    padre[id-1] = id;
+  }
+  
+  for (TPt<TNodeEDatNet<TInt, TFlt> >::TObj::TEdgeI ei = G->BegEI(); ei < G->EndEI(); ei++)
+    aristas.push_back(std::make_pair(ei.GetDat(), ei));
+  
+  std::sort(aristas.begin(), aristas.end());
+  
+  for (unsigned int i = 0; i < aristas.size(); ++i) {
+    int u = aristas[i].second.GetSrcNId();
+    int v = aristas[i].second.GetDstNId();
+    if (encontrarSet(u, padre) != encontrarSet(v, padre)) {
+      tree.push_back(aristas[i].second);
+      setUnion(u, v, padre);
+    }
+  }
+  
+  while (!tree.empty()) {
+//    std::cout << tree.front().GetSrcNId() << " --> " << tree.front().GetDstNId();
+//    std::cout << " peso: " << tree.front().GetDat() << std::endl;
+    tree.erase(tree.begin());
+  }
+  auto end = std::chrono::high_resolution_clock::now();
+  auto kruskal = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
+  std::cout << "Tiempo de ejecución de Kruskal: " << kruskal.count() << " us" << std::endl;
+
+  
+}
+
+int encontrarSet(int x, int padre[]) {
+  if (padre[x-1] != x)
+    padre[x-1] = encontrarSet(padre[x-1], padre);
+  return padre[x-1];
+}
+
+void setUnion(int u, int v, int padre[]) {
+  u = encontrarSet(u, padre);
+  v = encontrarSet(v, padre);
+  padre[u-1] = v;
 }
 
 void printVector(std::vector<int> vector){
@@ -341,3 +401,4 @@ void printVector(std::vector<int> vector){
 bool sortFunction(int a, int b, std::vector<float> distancias){
   return distancias[a-1] < distancias[b-1];
 }//cierre de sortFunction
+
