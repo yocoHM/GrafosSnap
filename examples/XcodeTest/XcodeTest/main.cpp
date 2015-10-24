@@ -8,12 +8,15 @@
 #include <deque>
 #include <chrono>
 #include <limits>
+#include "distanciaId.h"
 
 using namespace TSnap;
 
 void dijkstra(TPt<TNodeEDatNet<TInt, TFlt> >  graph, const int &SrcNId);
 
 void floydWarshall(TPt<TNodeEDatNet<TInt, TFlt> >  graph, int &vertices);
+
+void Prim(TPt<TNodeEDatNet<TInt, TFlt>> Grafo, int source);
 
 void printVector(std::vector<int> vector);
 
@@ -28,6 +31,19 @@ public:
     return sortFunction(o1, o2, type_ );
   }
 };
+
+struct {
+  bool operator()(distanciaId* a, distanciaId* b)
+  {
+    return a->getDistancia() < b->getDistancia();
+  }
+} comparaDistancia;
+struct {
+  bool operator()(distanciaId* a, distanciaId* b)
+  {
+    return a->getId() < b->getId();
+  }
+} comparaId;
 
 int main(int argc, char* argv[]) {
   
@@ -69,7 +85,7 @@ int main(int argc, char* argv[]) {
   public:
     myVis() { }
     myVis(const int& Nodes) { }
-    void DiscoverNode(int NId){ }//printf("%i\n",NId);
+    void DiscoverNode(int NId){ } //printf("%i\n",NId);
     void FinishNode(const int& NId) { }
     void ExamineEdge(const int& NId1, const int& NId2) { }
     void TreeEdge(const int& NId1, const int& NId2) { }
@@ -107,6 +123,10 @@ int main(int argc, char* argv[]) {
   std::cout << "---Floyd Warshall---" << std::endl;
   int numNodos = G->GetNodes();
   floydWarshall(G, numNodos);
+  
+  //Prim
+  std::cout << "-------Prim------" << std::endl;
+  Prim(G, 1);
   
   return 0;
   
@@ -234,16 +254,60 @@ void dijkstra(TPt<TNodeEDatNet<TInt, TFlt> >  graph, const int &v){
   auto end = std::chrono::high_resolution_clock::now();
   auto dijkstra = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
   
-  int node = 1;
-  for (int i = 0 ; i< parents.size(); i++){
-    std::cout << parents[node-1] << " -> " << node << " distance:  " << distances[node-1] << std::endl;
-    node++;
-  }//cierre del for
+//  int node = 1;
+//  for (int i = 0 ; i< parents.size(); i++){
+//    std::cout << parents[node-1] << " -> " << node << " distance:  " << distances[node-1] << std::endl;
+//    node++;
+//  }//cierre del for
   
   //impresion del tiempo de ejecucion
   std::cout << "Tiempo de ejecución de Dijkstra: " <<dijkstra.count() << " us" << std::endl;
   
 }//cierre de dijkstra
+
+void Prim(TPt<TNodeEDatNet<TInt, TFlt>> Grafo, int source)
+{
+  double inf = std::numeric_limits<double>::infinity();
+  distanciaId* u;
+  std::vector<distanciaId*> delta(Grafo->GetNodes());
+  std::vector<int> Q(Grafo->GetNodes());
+  std::vector<distanciaId*> S;
+  
+  auto begin = std::chrono::high_resolution_clock::now();
+  for (TNodeEDatNet< TInt, TFlt >::TNodeI NI = Grafo->BegNI(); NI < Grafo->EndNI(); NI++)
+  {
+    distanciaId* temp = new distanciaId();
+    temp->setDistancia(inf);
+    temp->setId(NI.GetId());
+    delta[NI.GetId() - 1] = temp;
+  }
+  delta[source-1]->setDistancia(0);
+  while (!delta.empty())
+  {
+    std::sort(delta.begin(), delta.end(), comparaDistancia);
+    u = delta[0];
+    for (auto i : delta)
+    {
+      if (Grafo->IsEdge(u->getId(), i->getId()))
+      {
+        if (i->getDistancia() > Grafo->GetEDat(u->getId(), i->getId()))
+        {
+          i->setPadre(u->getId());
+          i->setDistancia(Grafo->GetEDat(u->getId(), i->getId()));
+        }
+      }
+    }
+    S.push_back(delta[0]);
+    delta.erase(delta.begin());
+  }
+  auto end = std::chrono::high_resolution_clock::now();
+  auto prim = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
+  std::cout << "Tiempo de ejecución de Prim: " << prim.count() << " us" << std::endl;
+  
+//  for (auto i : S) {
+//    std::cout << i->getPadre() << "--->" << i->getId() << std::endl;
+//  }
+}
 
 void printVector(std::vector<int> vector){
   

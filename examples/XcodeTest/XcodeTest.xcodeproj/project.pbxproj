@@ -183,6 +183,7 @@
 		841E05F516E0030E00B86980 /* xmlser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xmlser.h; sourceTree = "<group>"; };
 		841E05F616E0030E00B86980 /* zipfl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = zipfl.cpp; sourceTree = "<group>"; };
 		841E05F716E0030E00B86980 /* zipfl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zipfl.h; sourceTree = "<group>"; };
+		D6DDFD271BDB1B61000F11CD /* distanciaId.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = distanciaId.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -218,6 +219,7 @@
 			isa = PBXGroup;
 			children = (
 				841E03F616DFE4E200B86980 /* main.cpp */,
+				D6DDFD271BDB1B61000F11CD /* distanciaId.h */,
 				841E03F816DFE4E200B86980 /* sample.1 */,
 			);
 			path = XcodeTest;
