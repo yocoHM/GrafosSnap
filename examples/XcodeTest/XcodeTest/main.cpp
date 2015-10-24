@@ -8,7 +8,8 @@
 #include <deque>
 #include <chrono>
 #include <limits>
-#include "distanciaId.h"
+//#include "distanciaId.h"
+//ESTE ES KRUSKAL
 
 using namespace TSnap;
 
@@ -21,6 +22,22 @@ void Prim(TPt<TNodeEDatNet<TInt, TFlt>> Grafo, int source);
 void printVector(std::vector<int> vector);
 
 bool sortFunction(int a, int b,std::vector<float> distancias);
+
+class distanciaId
+{
+private:
+public:
+  double distancia;
+  int id;
+  int padre;
+  distanciaId() { distancia = -1; id = 0; }
+  void setDistancia(double _distancia) { distancia = _distancia; }
+  void setId(int _id) { id = _id; }
+  void setPadre(int _padre) { padre = _padre; }
+  double getDistancia() { return distancia; }
+  int getId() { return id; }
+  int getPadre() { return padre; }
+};
 
 class sorter {
   std::vector<float> type_;
