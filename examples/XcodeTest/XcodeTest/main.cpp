@@ -9,7 +9,6 @@
 #include <limits>
 #include <queue>
 //#include "distanciaId.h"
-//ESTE ES KRUSKAL
 
 using namespace TSnap;
 
